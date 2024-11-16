@@ -23,7 +23,7 @@ function LoadingComponent() {
   const navigate = useNavigate();
 
   setTimeout(() => {
-    navigate("/");
+    navigate("/CarrouselImages");
   }, 3000);
 
   
