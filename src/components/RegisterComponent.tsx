@@ -13,7 +13,7 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-function LoginComponent() {
+function RegisterComponent() {
   const [showPassword, setShowPassword] = useState(false);
 
   const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -55,8 +55,8 @@ function LoginComponent() {
           src={loadingIcon}
           sx={{
             borderRadius: "50px",
-            width: "300px",
-            height: "300px",
+            width: "200px",
+            height: "200px",
           }}
         />
         <Box
@@ -64,7 +64,7 @@ function LoginComponent() {
           flexDirection="column"
           component="form"
           sx={{
-            "& .MuiTextField-root": { m: 1, width: "80%" },
+            "& .MuiTextField-root": { m: 1, width: "80%", height:"30%"},
             alignItems: "center",
             justifyContent: "center",
             width: "100%",
@@ -75,9 +75,51 @@ function LoginComponent() {
           <TextField
             required
             fullWidth
+            id="outlined-name"
+            label="Full Name"
+            type="text"
+            variant="outlined"
+            sx={{
+              backgroundColor: "#2E3562",
+              borderRadius: "10px",
+              "& .MuiInputLabel-root": {
+                color: "white",
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "lightblue",
+              },
+              "& .MuiInputBase-input": {
+                color: "white",
+              },
+            }}
+          />
+          <TextField
+            required
+            fullWidth
             id="outlined-required"
             label="Email"
             type="email"
+            variant="outlined"
+            sx={{
+              backgroundColor: "#2E3562",
+              borderRadius: "10px",
+              "& .MuiInputLabel-root": {
+                color: "white",
+              },
+              "& .MuiInputLabel-root.Mui-focused": {
+                color: "lightblue",
+              },
+              "& .MuiInputBase-input": {
+                color: "white",
+              },
+            }}
+          />
+                    <TextField
+            required
+            fullWidth
+            id="outlined-phone-number"
+            label="Phone Number"
+            type="number"
             variant="outlined"
             sx={{
               backgroundColor: "#2E3562",
@@ -140,7 +182,7 @@ function LoginComponent() {
         variant="contained"
         sx={{
           marginTop: "20px",
-          marginBottom: "30px",
+          marginBottom: "10px",
           width: "80%",
           padding: "10px",
           borderRadius: "10px",
@@ -163,7 +205,7 @@ function LoginComponent() {
       >
         <Typography>Or Sing In with</Typography>
         {/*Imagen de Google y Facebook*/}
-        <Box display="flex" gap="10px" marginTop="5px" marginBottom="2rem">
+        <Box display="flex" gap="20px" marginTop="5px" marginBottom="0.5rem">
           <GoogleIcon
             sx={{
               width: "30px",
@@ -179,20 +221,20 @@ function LoginComponent() {
         </Box>
       </Box>
       <Typography>
-        Don't have an account?
+        Do have an account?
         <Box
-          component="a"
           sx={{
+            display:"inline-block",
             color: "#2BE7E8",
             fontWeight: "bold",
             marginLeft: "5px",
           }}
         >
-          <Link to="/register">Sing Up</Link>
+          <Link to="/login">Sing In</Link>
         </Box>
       </Typography>
     </Box>
   );
 }
 
-export default LoginComponent;
+export default RegisterComponent;

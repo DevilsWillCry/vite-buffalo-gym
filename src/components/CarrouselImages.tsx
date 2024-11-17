@@ -64,7 +64,7 @@ function MainComponent() {
         height: "100vh",
         width: "100vw",
         alignItems: "center",
-        justifyContent: "space-between",
+        justifyContent: "flex-start",
       }}
     >
       <Box
@@ -73,73 +73,87 @@ function MainComponent() {
         alt={ArrayText[currentIndex]?.image}
         onClick={handleNextClick}
         sx={{
-          height: "auto",
-          width: "100vw",
-          objectFit:"contain",
-          borderRadius: "0px",
+          height: "450px",
+          width: "99%",
+          objectFit: "fill",
         }}
       />
-      <Box textAlign="left" width="90%" marginTop="0%">
-        <Typography variant="h5" fontWeight="bold" color="white">
-          {ArrayText[currentIndex]?.title}
-        </Typography>
-        <Typography
-          color="white"
-          mt={1}
+      <Box display="flex" flexDirection="column" width="100%" alignItems="center" height="100%" sx={{
+        justifyContent: "flex-start",
+      }}>
+        <Box
+          alignItems="center"
+          textAlign="left"
+          width="90%"
+          height="auto"
           sx={{
-            height:"30px",
-            fontSize: "4vw",
-            letterSpacing: "0.2px",
+            padding: "10px",
           }}
         >
-          {ArrayText[currentIndex]?.description}
-        </Typography>
-        <Box display="flex" sx={{
-          flexDirection:"row",
-          alignItems: "center",
-          width: "100%",
-          justifyContent: "center",
-          gap: "10px",
-          marginTop:"20px",
-        }}>
-          {ArrayText.map((item, index) => (
-            <Box
-              key={index}
-              mt={2}
-              sx={{
-                backgroundColor: "#2BE7E8",
-                width: item.id === currentIndex ? "30px" : "10px",
-                height: "10px",
-                borderRadius: "20px",
-                transitionProperty:"all",
-                transitionTimingFunction:"cubic-bezier(0.4, 0, 0.2, 1)",
-                transitionDuration:"0.15s"
-              }}
-            />
-          ))}
+          <Typography variant="h5" fontWeight="bold" color="white">
+            {ArrayText[currentIndex]?.title}
+          </Typography>
+          <Typography
+            color="white"
+            mt={1}
+            sx={{
+              height: "30px",
+              fontSize: "16px",
+              fontWeight: "100"
+            }}
+          >
+            {ArrayText[currentIndex]?.description}
+          </Typography>
+          <Box
+            display="flex"
+            sx={{
+              flexDirection: "row",
+              alignItems: "center",
+              width: "100%",
+              justifyContent: "center",
+              gap: "10px",
+              marginTop: "20px",
+            }}
+          >
+            {ArrayText.map((item, index) => (
+              <Box
+                key={index}
+                mt={2}
+                sx={{
+                  backgroundColor: "#2BE7E8",
+                  width: item.id === currentIndex ? "30px" : "10px",
+                  height: "10px",
+                  borderRadius: "20px",
+                  transitionProperty: "all",
+                  transitionTimingFunction: "cubic-bezier(0.4, 0, 0.2, 1)",
+                  transitionDuration: "0.15s",
+                }}
+              />
+            ))}
+          </Box>
         </Box>
+        {/* Botón de navegación */}
+        <Button
+          variant="contained"
+          onClick={handleNextClick}
+          sx={{
+            marginTop: "20px",
+            marginBottom: "30px",
+            width: "95%",
+            padding: "5px",
+            borderRadius: "50px",
+            fontSize: "15px",
+            color: "white",
+            fontWeight: "bold",
+            backgroundColor: "#2BE7E8",
+            "&:hover": {
+              backgroundColor: "#2CE7E5",
+            },
+          }}
+        >
+          Next
+        </Button>
       </Box>
-      {/* Botón de navegación */}
-      <Button
-        variant="contained"
-        onClick={handleNextClick}
-        sx={{
-          marginTop: "20px",
-          marginBottom: "30px",
-          width: "95%",
-          padding: "5px",
-          borderRadius: "50px",
-          fontSize: "15px",
-          color: "white",
-          fontWeight: "bold",
-          backgroundColor: "#2BE7E8",
-          "&:hover": {
-            backgroundColor: "#2CE7E5",
-          },
-        }}
-      >
-        Next
-      </Button>
     </Box>
   );
 }

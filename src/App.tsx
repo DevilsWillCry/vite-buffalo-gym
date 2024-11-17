@@ -4,6 +4,7 @@ import CarrouselImages from "./components/CarrouselImages";
 import LoadingComponent from "./components/LoadingComponent";
 import { Route, Routes } from "react-router-dom";
 import LoginComponent from "./components/LoginComponent";
+import RegisterComponent from "./components/RegisterComponent";
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<LoadingComponent />} />
         <Route path="/CarrouselImages" element={<CarrouselImages />} />
         <Route path="/login" element={<LoginComponent />} />
+        <Route path="/register" element={<RegisterComponent />} />
       </Routes>
     </Box>
   );
