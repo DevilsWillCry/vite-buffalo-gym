@@ -14,8 +14,9 @@ function App() {
       <Routes>
         <Route path="/" element={<LoadingComponent />} />
         <Route path="/CarrouselImages" element={<CarrouselImages />} />
-        <Route path="/login" element={<ScrollPicker items={numbers} />} />
+        <Route path="/login" element={<LoginComponent />} />
         <Route path="/register" element={<RegisterComponent />} />
+        <Route path="/userData" element={<ScrollPicker items={numbers} />} />
       </Routes>
     </Box>
   );

@@ -1,8 +1,20 @@
-import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import React, { useEffect, useState } from "react";
+import { Box, Typography, Modal, Button } from "@mui/material";
 import AppIcon from "../assets/buffalo-logo.svg";
 import KeyboardDoubleArrowRightIcon from "@mui/icons-material/KeyboardDoubleArrowRight";
 import KeyboardDoubleArrowLeftIcon from "@mui/icons-material/KeyboardDoubleArrowLeft";
+import DoneIcon from "@mui/icons-material/Done";
+
+import MaleGenderIcon from "../assets/male-logo.png";
+import FemaleGenderIcon from "../assets/female-logo.svg";
+import { useSelector } from "react-redux";
+import { RootState } from "../redux/store"
+
+import {
+  db,
+} from "../firebase/firebase.config";
+import { doc, getDoc } from "firebase/firestore";
+import { User } from "../interfaces/types";
 
 const ScrollPicker = ({ items }: { items: number[] }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -11,6 +23,15 @@ const ScrollPicker = ({ items }: { items: number[] }) => {
   const [selectedWeight, setSelectedWeight] = useState(false);
   const [selectedAge, setSelectedAge] = useState(false);
   const [selectedGender, setSelectedGender] = useState(false);
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
+  const [isMale, setIsMale] = useState(false);
+  const [isFemale, setIsFemale] = useState(false);
+
+  const user = useSelector((state:RootState) => state.user.user);
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const scrollTop = event.currentTarget.scrollTop;
@@ -53,11 +74,46 @@ const ScrollPicker = ({ items }: { items: number[] }) => {
     } else if (selectedAge && !selectedWeight) {
       setSelectedWeight(true);
       setSelectedAge(false);
-    } else if (selectedGender && !selectedAge){
+    } else if (selectedGender && !selectedAge) {
       setSelectedAge(true);
       setSelectedGender(false);
     }
   };
+
+  const handleSaveData = async () => {
+    handleClose();
+    try {
+      if (user?.uid){
+        const userDocRef = doc(db, "users", user.uid);
+        const updateUserData = (await getDoc(userDocRef)).data() as User;
+        console.log(updateUserData);
+      } 
+    } catch (error) {
+      console.error("Error getting document:", error);
+    }
+  };
+
+  useEffect(() => {
+    console.log(isMale, isFemale);
+    if (isMale) {
+      setIsMale(true);
+      setIsFemale(false);
+    }
+    if (isFemale) {
+      setIsFemale(true);
+      setIsMale(false);
+    }
+  }, [isMale, isFemale]);
+
+  console.log(
+    items[selectedIndex],
+    items[selectedIndex2] - 100,
+    items[selectedIndex3] - 132,
+    "isMale?",
+    isMale,
+    "isFemale?",
+    isFemale
+  );
 
   return (
     <Box
@@ -121,6 +177,89 @@ const ScrollPicker = ({ items }: { items: number[] }) => {
           },
         }}
       />
+
+      <DoneIcon
+        onClick={handleOpen}
+        sx={{
+          color: "white",
+          fontSize: "40px",
+          cursor: "pointer",
+          position: "fixed",
+          top: "50%",
+          right: "1%",
+          opacity:
+            (selectedGender && isMale) || (selectedGender && isFemale)
+              ? "100%"
+              : "0",
+          pointerEvents:
+            (selectedGender && isMale) || (selectedGender && isFemale)
+              ? ""
+              : "none",
+          transition: "all 0.5s ease-in-out",
+          animation: "wiggleH 1s infinite",
+          "@keyframes wiggleH": {
+            "0%, 100%": {
+              transform: "translateY(-50%) translateY(0)",
+            },
+            "25%": {
+              transform: "translateY(-50%) translateY(-2px)",
+            },
+            "75%": {
+              transform: "translateY(-50%) translateY(3px)",
+            },
+          },
+        }}
+      />
+      <Modal
+        keepMounted
+        open={open}
+        onClose={handleClose}
+        aria-labelledby="keep-mounted-modal-title"
+        aria-describedby="keep-mounted-modal-description"
+      >
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "70%",
+            height: "20%",
+            backgroundColor: "#2E3562",
+            boxShadow: 24,
+            p: 4,
+          }}
+        >
+          <Typography id="keep-mounted-modal-title" variant="h6" component="h2">
+            Is the information you provide us correct?
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginTop: "20px",
+              marginBottom: "20px",
+            }}
+          >
+            <Button
+              onClick={handleSaveData}
+              variant="contained"
+              color="success"
+            >
+              Sure!
+            </Button>
+            <Button onClick={handleClose} variant="outlined" color="error">
+              I'm not sure
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+
       <Box
         component="img"
         alt={AppIcon}
@@ -330,6 +469,8 @@ const ScrollPicker = ({ items }: { items: number[] }) => {
 
         <Box
           sx={{
+            display: "flex",
+            flexDirection: "column",
             opacity: selectedGender ? "100%" : "0",
             visibility: selectedGender ? "visible" : "hidden",
             width: "180px",
@@ -337,14 +478,81 @@ const ScrollPicker = ({ items }: { items: number[] }) => {
             overflowY: "scroll",
             scrollbarWidth: "none", // Oculta el scrollbar en Firefox
             "&::-webkit-scrollbar": { display: "none" }, // Oculta el scrollbar en Chrome
-            backgroundColor: "#2E3562",
             borderRadius: "10px",
             position: "fixed",
             textAlign: "center",
+            alignItems: "center",
+            justifyContent: "center",
             transform: selectedGender ? "translateX(0%)" : "translateX(-300%)",
+            gap: "20px",
             transition: "all 0.5s ease",
           }}
-        ></Box>
+        >
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "10px 30px",
+              borderRadius: "20px",
+              backgroundColor: isMale ? "#2E3562" : "transparent",
+              transition: "all 0.5s ease",
+            }}
+            onClick={() => {
+              setIsMale(true), setIsFemale(false);
+            }}
+          >
+            <Box
+              component="img"
+              alt={MaleGenderIcon}
+              src={MaleGenderIcon}
+              sx={{
+                padding: "20px",
+                width: "60px",
+                height: "60px",
+              }}
+            />
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: "500", color: "#ffffff" }}
+            >
+              Male
+            </Typography>
+          </Box>
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+              alignItems: "center",
+              padding: "10px 30px",
+              borderRadius: "20px",
+              backgroundColor: isFemale ? "#2E3562" : "transparent",
+              transition: "all 0.5s ease",
+            }}
+            onClick={() => {
+              setIsFemale(true), setIsMale(false);
+            }}
+          >
+            <Box
+              component="img"
+              alt={FemaleGenderIcon}
+              src={FemaleGenderIcon}
+              sx={{
+                padding: "20px",
+                width: "60px",
+                height: "60px",
+              }}
+            />
+            <Typography
+              variant="h6"
+              sx={{ fontWeight: "500", color: "#ffffff" }}
+            >
+              Female
+            </Typography>
+          </Box>
+        </Box>
       </Box>
     </Box>
   );
