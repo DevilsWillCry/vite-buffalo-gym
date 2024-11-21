@@ -12,7 +12,12 @@ dist
 dist-ssr
 *.local
 
-src/firebase/firebase.config.ts
+#dotenv environment variables files
+.env
+.env.developmente.local
+.env.test.local
+.env.production.local
+.env.local
 
 # Editor directories and files
 .vscode/*
