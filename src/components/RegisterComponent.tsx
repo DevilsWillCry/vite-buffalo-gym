@@ -16,6 +16,9 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 import { createUserWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import {
   auth,
@@ -35,10 +38,6 @@ function RegisterComponent() {
   const [showPassword, setShowPassword] = useState(false);
   const [successAccount, setSuccessAccount] = useState(false);
   const [errorAccount, setErrorAccount] = useState(false);
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -73,48 +72,72 @@ function RegisterComponent() {
     }
   }, [successAccount, errorAccount]);
 
-  const signup = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
+  const validationSchema = Yup.object({
+    name: Yup.string()
+      .required("Name is required")
+      .min(3, "Name must be at least 3 characters"),
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
+    phone: Yup.string()
+      .matches(/^\d+$/, "Phone number must only contain digits")
+      .min(10, "Phone number must be at least 10 digits")
+      .required("Phone number is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+  });
 
-      const userDocRef = doc(db, "users", user.uid);
-      const userDoc = await getDoc(userDocRef);
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      setLoading(true);
+      try {
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          values.email,
+          values.password
+        );
+        const user = userCredential.user;
 
-      if (!userDoc.exists()) {
-        setDoc(userDocRef, {
-          uid: user.uid,
-          name: name,
-          phone: phone,
-          email: email,
-          createdAt: user.metadata.creationTime,
-          isAdmin: false,
-          age: null,
-          gender: null,
-          height: null,
-          weight: null,
-        });
+        const userDocRef = doc(db, "users", user.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (!userDoc.exists()) {
+          await setDoc(userDocRef, {
+            uid: user.uid,
+            name: values.name,
+            phone: values.phone,
+            email: values.email,
+            createdAt: user.metadata.creationTime,
+            isAdmin: false,
+            age: null,
+            gender: null,
+            height: null,
+            weight: null,
+          });
+        }
+
+        const updateUserData = (await getDoc(userDocRef)).data() as User;
+        dispatch(login(updateUserData));
+
+        setSuccessAccount(true);
+        setLoading(false);
+
+        navigate("/userData");
+      } catch (error) {
+        console.error("Error creating user:", error);
+        setErrorAccount(true);
+        setLoading(false);
       }
-      const updateUserData = (await getDoc(userDocRef)).data() as User;
-
-      dispatch(login(updateUserData));
-      setSuccessAccount(true);
-      setLoading(false);
-
-      navigate("/userData");
-    } catch (error) {
-      console.error("Error creating user with email and password:", error);
-      setErrorAccount(true);
-      setLoading(false);
-      // Manejar errores aquí, como mostrar un mensaje al usuario
-    }
-  };
+    },
+  });
 
   const signInWithGoogle = async () => {
     setLoading(true);
@@ -233,7 +256,7 @@ function RegisterComponent() {
         />
         <FormControl
           component="form"
-          onSubmit={signup}
+          onSubmit={formik.handleSubmit}
           sx={{
             "& .MuiTextField-root": { m: 1, width: "80%" },
             display: "flex",
@@ -247,10 +270,14 @@ function RegisterComponent() {
             required
             fullWidth
             label="Full Name"
+            name="name"
             type="text"
             variant="outlined"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={formik.values.name}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.name && Boolean(formik.errors.name)}
+            helperText={formik.touched.name && formik.errors.name}
             sx={{
               backgroundColor: "#2E3562",
               borderRadius: "10px",
@@ -263,10 +290,14 @@ function RegisterComponent() {
             required
             fullWidth
             label="Email"
+            name="email"
             type="email"
             variant="outlined"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            helperText={formik.touched.email && formik.errors.email}
             sx={{
               backgroundColor: "#2E3562",
               borderRadius: "10px",
@@ -279,10 +310,14 @@ function RegisterComponent() {
             required
             fullWidth
             label="Phone Number"
+            name="phone"
             type="number"
             variant="outlined"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
+            value={formik.values.phone}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.phone && Boolean(formik.errors.phone)}
+            helperText={formik.touched.phone && formik.errors.phone}
             sx={{
               backgroundColor: "#2E3562",
               borderRadius: "10px",
@@ -294,9 +329,13 @@ function RegisterComponent() {
           <TextField
             required
             label="Password"
+            name="password"
             type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

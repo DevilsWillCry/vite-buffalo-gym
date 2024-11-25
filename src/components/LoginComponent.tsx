@@ -17,6 +17,9 @@ import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
+import { useFormik } from "formik";
+import * as Yup from "yup";
+
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
 import {
@@ -36,8 +39,6 @@ function LoginComponent() {
   const [showPassword, setShowPassword] = useState(false);
   const [successAccount, setSuccessAccount] = useState(false);
   const [errorAccount, setErrorAccount] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const { enqueueSnackbar } = useSnackbar();
 
@@ -121,38 +122,53 @@ function LoginComponent() {
     }
   };
 
-  const signin = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const userCredential = await signInWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-      const user = userCredential.user;
-      console.log("User signed in successfully!", user);
-      const userRef = doc(db, "users", user.uid);
-      const userSnap = await getDoc(userRef);
+  const validationSchema = Yup.object({
+    email: Yup.string()
+      .email("Invalid email format")
+      .required("Email is required"),
+    password: Yup.string()
+      .min(6, "Password must be at least 6 characters")
+      .required("Password is required"),
+  });
 
-      if (userSnap.exists()) {
-        const userData = userSnap.data() as User;
-        console.log("User data from Firestore:", userData);
-        dispatch(login(userData));
-      } else {
-        console.log("No such user data!");
-        return
+  const formik = useFormik({
+    initialValues: {
+      email: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+      setLoading(true);
+      try {
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          values.email,
+          values.password
+        );
+        const user = userCredential.user;
+        console.log("User signed in successfully!", user);
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+  
+        if (userSnap.exists()) {
+          const userData = userSnap.data() as User;
+          console.log("User data from Firestore:", userData);
+          dispatch(login(userData));
+        } else {
+          console.log("No such user data!");
+          return
+        }
+  
+        navigate("/userData");
+        setSuccessAccount(true);
+        setLoading(false);
+      } catch (error) {
+        console.error(error);
+        setErrorAccount(true);
+        setLoading(false);
       }
-
-      navigate("/userData");
-      setSuccessAccount(true);
-      setLoading(false);
-    } catch (error) {
-      console.error(error);
-      setErrorAccount(true);
-      setLoading(false);
-    }
-  };
+    },
+  });
 
   if (loading) {
     return (
@@ -199,7 +215,7 @@ function LoginComponent() {
         />
         <FormControl
           component="form"
-          onSubmit={signin}
+          onSubmit={formik.handleSubmit}
           sx={{
             "& .MuiTextField-root": { m: 1, width: "80%" },
             display: "flex",
@@ -213,11 +229,15 @@ function LoginComponent() {
             required
             fullWidth
             id="outlined-required"
+            name="email"
             label="Email"
             type="email"
             variant="outlined"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={formik.values.email}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.email && Boolean(formik.errors.email)}
+            helperText={formik.touched.email && formik.errors.email}
             sx={{
               backgroundColor: "#2E3562",
               borderRadius: "10px",
@@ -236,10 +256,14 @@ function LoginComponent() {
           <TextField
             required
             id="outlined-password"
+            name="password"
             label="Password"
             type={showPassword ? "text" : "password"}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={formik.values.password}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.touched.password && Boolean(formik.errors.password)}
+            helperText={formik.touched.password && formik.errors.password}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
