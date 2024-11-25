@@ -1,6 +1,6 @@
 # React + TypeScript + Vite
 
-# React Firebase CRUD Project
+# Vite Buffalo APP
 
 [![React](https://img.shields.io/badge/React-v18.0.0-blue)](https://reactjs.org/)  
 [![Firebase](https://img.shields.io/badge/Firebase-v9.0.0-orange)](https://firebase.google.com/)  
@@ -55,7 +55,7 @@ El propósito principal es demostrar la planificación, desarrollo e implementac
 
 ### Diseño
 
-- CSS Framework (Bootstrap, TailwindCSS, u otro).
+- CSS Framework (Material-UI).
 
 ---
 
@@ -73,5 +73,5 @@ El propósito principal es demostrar la planificación, desarrollo e implementac
 1. Clona este repositorio:
 
    ```bash
-   git clone https://github.com/tu_usuario/react-firebase-crud-project.git
-   cd react-firebase-crud-project
+   git clone https://github.com/DevilsWillCry/vite-buffalo-gym.git
+   cd vite-buffalo-gym
