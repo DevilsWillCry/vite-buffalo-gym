@@ -1,50 +1,77 @@
 # React + TypeScript + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# React Firebase CRUD Project
 
-Currently, two official plugins are available:
+[![React](https://img.shields.io/badge/React-v18.0.0-blue)](https://reactjs.org/)  
+[![Firebase](https://img.shields.io/badge/Firebase-v9.0.0-orange)](https://firebase.google.com/)  
+[![TypeScript](https://img.shields.io/badge/TypeScript-v5.0.0-blue)](https://www.typescriptlang.org/)  
+[![Redux](https://img.shields.io/badge/Redux-v8.0.0-purple)](https://redux.js.org/)  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Descripción
 
-## Expanding the ESLint configuration
+Este proyecto es una aplicación web construida con **React**, **Redux** y **Firebase** que implementa un sistema completo de CRUD (Crear, Leer, Actualizar, Eliminar) con autenticación mediante Google y Facebook. La aplicación está diseñada para ser **responsiva**, funcional y segura, utilizando herramientas modernas como **React Hooks**, **TypeScript**, y la gestión de formularios con **Formik** y **Yup**.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+El propósito principal es demostrar la planificación, desarrollo e implementación de un sistema escalable, utilizando un flujo de trabajo ágil gestionado con **Kanban** en GitHub.
 
-- Configure the top-level `parserOptions` property like this:
+---
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Características
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- **Autenticación:**
+  - Inicio de sesión con Google y Facebook mediante Firebase Authentication.
+  - Rutas públicas y privadas protegidas.
+- **Gestión de datos:**
+  - CRUD completo (Agregar, Listar, Editar, Eliminar) utilizando Firestore como base de datos.
+  - Búsqueda dinámica.
+- **Validación de formularios:**
+  - Formularios validados con Formik y Yup.
+- **Carga de imágenes:**
+  - Uso de Cloudinary para subir imágenes mediante solicitudes POST.
+- **Diseño responsive:**
+  - Interfaz amigable adaptada a dispositivos móviles y de escritorio.
+- **Seguridad:**
+  - Reglas de seguridad implementadas en Firebase.
+- **Despliegue:**
+  - Deploy realizado con Firebase Hosting.
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+---
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+## Tecnologías utilizadas
+
+### Frontend
+
+- [React](https://reactjs.org/)
+- [Redux](https://redux.js.org/)
+- [React Router](https://reactrouter.com/)
+- [Formik](https://formik.org/)
+- [Yup](https://github.com/jquense/yup)
+- [TypeScript](https://www.typescriptlang.org/)
+
+### Backend
+
+- [Firebase Authentication](https://firebase.google.com/products/auth)
+- [Firestore Database](https://firebase.google.com/products/firestore)
+- [Cloudinary](https://cloudinary.com/)
+
+### Diseño
+
+- CSS Framework (Bootstrap, TailwindCSS, u otro).
+
+---
+
+## Instalación
+
+### Requisitos previos
+
+- Node.js >= 16
+- Yarn o npm
+- Cuenta de Firebase
+- Cuenta en Cloudinary
+
+### Pasos
+
+1. Clona este repositorio:
+
+   ```bash
+   git clone https://github.com/tu_usuario/react-firebase-crud-project.git
+   cd react-firebase-crud-project
